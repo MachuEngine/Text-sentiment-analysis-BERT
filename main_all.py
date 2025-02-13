@@ -42,6 +42,10 @@ class SentimentDataset(Dataset):
       하지만 모델이 패딩을 의미 없는 값으로 인식하고 무시해야 함 
       → 이를 위한 것이 attention_mask이다.
 
+       attention_mask의 역할
+        attention_mask는 BERT 모델이 입력 문장에서 실제 단어와 패딩(PAD)을 구별할 수 있도록 도와주는 역할을 한다.
+        즉, BERT가 의미 있는 단어만 학습하고, 패딩된 부분을 무시하도록 유도하는 역할을 한다.
+
     *. return 
     딕셔너리 반환
     → 모델 학습에 필요한 입력 데이터(토큰 ID, 어텐션 마스크)와 원본 텍스트, 레이블을 딕셔너리 형태로 반환
@@ -182,7 +186,7 @@ def eval_model(model, data_loader, device):
     return correct_predictions.double() / total
 
 # 4. 데이터셋 샘플 시각화: 데이터셋의 샘플 구조를 출력합니다. 총 3개만 출력 
-def visualize_dataset_sample(dataset, num_samples=3):
+def visualize_dataset_sample(dataset, num_samples=16):
     """ 
     num_samples만큼 데이터셋 샘플을 출력
     dataset은 train_dataset이며, train_dataset은 SentimentDataset 클래스의 객체임.
@@ -303,12 +307,15 @@ def main():
     dataset = load_dataset("imdb") # Hugging Face의 datasets 라이브러리를 통해 API를 호출
 
     # 훈련 데이터 (25,000개 중 5000개만 사용)
-    train_texts = dataset["train"]["text"][:50]
-    train_labels = dataset["train"]["label"][:50]
+    # 훈련 데이터 5000개를 랜덤으로 샘플링
+    train_data = dataset["train"].shuffle(seed=42).select(range(150))
+    train_texts = train_data["text"]
+    train_labels = train_data["label"]
 
-    # 테스트 데이터 (25,000개 중 5000개만 사용)
-    test_texts = dataset["test"]["text"][:50]
-    test_labels = dataset["test"]["label"][:50]
+    # 테스트 데이터 500개를 랜덤으로 샘플링
+    test_data = dataset["test"].shuffle(seed=42).select(range(10))
+    test_texts = test_data["text"]
+    test_labels = test_data["label"]
 
     print(f"Training data size: {len(train_texts)}")
     print(f"Test data size: {len(test_texts)}")
