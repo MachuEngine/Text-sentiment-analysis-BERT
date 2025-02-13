@@ -37,6 +37,11 @@ class SentimentDataset(Dataset):
     - return_attention_mask=True: 패딩 부분을 마스킹하는 어텐션 마스크 생성
     - return_tensors='pt': 결과를 PyTorch 텐서로 반환
 
+    *. attention_mask가 필요한 이유
+    - BERT 모델은 **입력 시퀀스의 길이를 고정(max_length)**해야 하기 때문에, 길이가 짧은 문장은 빈 공간을 [PAD] 토큰(=0)으로 채워야 함.
+      하지만 모델이 패딩을 의미 없는 값으로 인식하고 무시해야 함 
+      → 이를 위한 것이 attention_mask이다.
+
     *. return 
     딕셔너리 반환
     → 모델 학습에 필요한 입력 데이터(토큰 ID, 어텐션 마스크)와 원본 텍스트, 레이블을 딕셔너리 형태로 반환
@@ -178,9 +183,16 @@ def eval_model(model, data_loader, device):
 
 # 4. 데이터셋 샘플 시각화: 데이터셋의 샘플 구조를 출력합니다. 총 3개만 출력 
 def visualize_dataset_sample(dataset, num_samples=3):
+    """ 
+    num_samples만큼 데이터셋 샘플을 출력
+    dataset은 train_dataset이며, train_dataset은 SentimentDataset 클래스의 객체임.
+    dataset의 i번째 샘플을 가져와 text, input_ids, attention_mask, labels 등을 출력
+    """
     print("=== dataset sample ===")
     for i in range(num_samples):
         sample = dataset[i]
+        print("=== 인덱스i dataset ===")
+        print(sample)
         print(f"sample {i+1}:")
         print("text:", sample['text'])
         print("input token IDs:", sample['input_ids'])
@@ -290,13 +302,13 @@ def main():
     print("Downloading IMDb dataset...")
     dataset = load_dataset("imdb") # Hugging Face의 datasets 라이브러리를 통해 API를 호출
 
-    # 훈련 데이터 (25,000개 중 500개만 사용)
-    train_texts = dataset["train"]["text"][:500]
-    train_labels = dataset["train"]["label"][:500]
+    # 훈련 데이터 (25,000개 중 5000개만 사용)
+    train_texts = dataset["train"]["text"][:50]
+    train_labels = dataset["train"]["label"][:50]
 
-    # 테스트 데이터 (25,000개 중 500개만 사용)
-    test_texts = dataset["test"]["text"][:500]
-    test_labels = dataset["test"]["label"][:500]
+    # 테스트 데이터 (25,000개 중 5000개만 사용)
+    test_texts = dataset["test"]["text"][:50]
+    test_labels = dataset["test"]["label"][:50]
 
     print(f"Training data size: {len(train_texts)}")
     print(f"Test data size: {len(test_texts)}")
