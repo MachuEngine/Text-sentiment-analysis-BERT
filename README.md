@@ -2,7 +2,7 @@
 
 
 
-### Fine tuning 후 감정 분류 (긍정 / 부정)
+### Fine tuning 감정 분류 (긍정 / 부정)
 fine tuning #1
 - traing data 개수 : 100
 - test data 개수 : 10 
