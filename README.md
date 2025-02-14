@@ -1,7 +1,7 @@
 # Text-sentiment-analysis
 
 ## 개요
-이 저장소는 **PyTorch 및 Hugging Face `transformers` 라이브러리**를 사용하여 **BERT 기반 감정 분석**을 수행하는 프로젝트이다. 
+**PyTorch 및 Hugging Face `transformers` 라이브러리**를 사용하여 **BERT 기반 감정 분석**을 수행하는 프로젝트이다. 
 **IMDb 영화 리뷰 데이터셋**을 활용하여 긍정/부정을 분류하는 이진 감정 분석을 수행한다.
 
 ## 주요 기능
